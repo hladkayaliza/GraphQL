@@ -1,0 +1,8 @@
+{
+  "name": "GraphQL",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/hladkayaliza/GraphQL.git",
+  "author": "Lizaveta Hladkaya <Lizaveta.Hladkaya@itechart-group.com>",
+  "license": "MIT"
+}
