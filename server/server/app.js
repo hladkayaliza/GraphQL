@@ -7,7 +7,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 3005;
 
-mongoose.connect('mongodb+srv://hladkayaLiza:Eveline62751Liza@cluster0.liulk.mongodb.net/GraphQL?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+mongoose.connect('mongodb+srv://hladli:Eveline61@cluster0.7ge4v.mongodb.net/MyExample?retryWrites=true&w=majority');
 
 app.use(cors());
 
@@ -24,5 +24,4 @@ dbConnection.once('open', () => console.log('Connected to DB!'));
 app.listen(PORT, err => {
     err ? console.log(err) : console.log('Server started!');
 });
-
 
