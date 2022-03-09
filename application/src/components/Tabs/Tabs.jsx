@@ -9,6 +9,7 @@ import DirectionsCarIcon from '@material-ui/icons/DirectionsCar';
 
 import withHocs from './TabsHoc';
 import Users from "../Users/Users";
+import Cars from "../Cars/Cars";
 const TabContainer = ({ children, dir }) => (
     <Typography component='div' dir={dir} style={{padding: 8 * 3 }}>
         {children}
@@ -37,7 +38,7 @@ class SimpleTabs extends React.Component {
                 </AppBar>
                 <SwipeableViews axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={value} onChangeIndex={this.handleChangeIndex} >
                     <TabContainer dir={theme.direction}><Users /></TabContainer>
-                    <TabContainer dir={theme.direction}>2</TabContainer>
+                    <TabContainer dir={theme.direction}><Cars /></TabContainer>
                 </SwipeableViews>
             </div>
         );

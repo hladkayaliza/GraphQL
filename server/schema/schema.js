@@ -118,7 +118,7 @@ const Mutation = new GraphQLObjectType({
                 model: { type: new GraphQLNonNull(GraphQLString) },
                 color: { type: GraphQLString },
                 year: { type: GraphQLInt },
-                ownerId: { type: new GraphQLNonNull(GraphQLString) },
+                ownerId: { type: GraphQLID },
             },
             resolve(parent, { type, brand, model, year, ownerId }) {
                 const car = new Cars({
@@ -150,7 +150,7 @@ const Mutation = new GraphQLObjectType({
                 model: { type: new  GraphQLNonNull(GraphQLString)},
                 color: { type: GraphQLString },
                 year: { type: GraphQLInt },
-                ownerId: { type: new  GraphQLNonNull(GraphQLID) },
+                ownerId: { type: GraphQLID },
             },
             resolve(parent, { id, type, brand, model, color, year, ownerId }) {
                 return Cars.findByIdAndUpdate(
@@ -159,7 +159,6 @@ const Mutation = new GraphQLObjectType({
                 )
             }
         },
-        // updateCar: {},
     }
 });
 

@@ -13,6 +13,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
 import Checkbox from '@material-ui/core/Checkbox';
+import UserDialog from "../UsersDialog/UsersDialog";
 
 
 class UsersTable extends React.Component {
@@ -51,6 +52,7 @@ class UsersTable extends React.Component {
 
         return (
             <>
+                <UserDialog open={openDialog} handleClose={this.handleDialogClose} id={activeElem.id} />
                 <Paper className={classes.root}>
                     <Table>
                     <TableHead>
@@ -83,7 +85,7 @@ class UsersTable extends React.Component {
                                             </IconButton>
                                             <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose}>
                                                 <MenuItem onClick={() => this.handleEdit(user)}><CreateIcon />Edit</MenuItem>
-                                                <MenuItem onClick={this.handleDelete}><DeleteIcon /> Edit</MenuItem>
+                                                <MenuItem onClick={this.handleDelete}><DeleteIcon /> Delete</MenuItem>
                                             </Menu>
                                         </>
                                     </TableCell>
