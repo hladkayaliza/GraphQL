@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import { gql } from '@apollo/client';
 
 export const addUserMutation = gql`
     mutation addUser($name: String!, $email: String!, $status: Boolean) {

@@ -4,5 +4,9 @@
   "main": "index.js",
   "repository": "https://github.com/hladkayaliza/GraphQL.git",
   "author": "Lizaveta Hladkaya <Lizaveta.Hladkaya@itechart-group.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@apollo/client": "^3.5.10",
+    "graphql": "^16.3.0"
+  }
 }

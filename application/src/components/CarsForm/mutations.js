@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import { gql } from '@apollo/client';
 
 export const addCarMutation = gql`
     mutation addCar($model: String!, $brand: String!, $color: String, $type: String!, $year: Int, $owner: ID) {

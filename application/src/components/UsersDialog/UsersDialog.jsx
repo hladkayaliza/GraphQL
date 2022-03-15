@@ -49,4 +49,5 @@ class UserDialog extends React.Component {
     }
 }
 
-export default withHocs(UserDialog);
+export default UserDialog;
+// export default withHocs(UserDialog);

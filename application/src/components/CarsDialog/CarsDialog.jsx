@@ -42,4 +42,5 @@ class CarsDialog extends React.Component {
     }
 }
 
-export default withHocs(CarsDialog);
+// export default withHocs(CarsDialog);
+export default CarsDialog;

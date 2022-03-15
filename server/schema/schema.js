@@ -162,6 +162,15 @@ const Mutation = new GraphQLObjectType({
     }
 });
 
+const Subscription = new GraphQLObjectType({
+    name: 'Subscription',
+    fields: {
+        carUpdated: {
+            
+        }
+    }
+});
+
 module.exports = new GraphQLSchema({
     query: Query,
     mutation: Mutation,
