@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './components/theme';
 import  { ApolloProvider, InMemoryCache } from '@apollo/client';
-import Tabs from './components/Tabs/Tabs';
+import Tabs from './components/tabs/tabs';
 import { ApolloClient } from "@apollo/client";
 
 const client = new ApolloClient({

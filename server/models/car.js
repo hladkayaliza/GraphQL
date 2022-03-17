@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 
 const carSchema = new Schema({
     type: String,
-    brand: String,
-    model: String,
+    modelId: String,
     color: String,
     year: Number,
     ownerId: String,

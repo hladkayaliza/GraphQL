@@ -3,6 +3,7 @@ const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList, GraphQLSchema,
 
 const Users = require('../models/user');
 const Cars = require('../models/car');
+const Models = require('../models/model');
 
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -10,7 +11,16 @@ const UserType = new GraphQLObjectType({
         id: { type: GraphQLID },
         name: { type: new GraphQLNonNull(GraphQLString)},
         email: { type: new  GraphQLNonNull(GraphQLString)},
-        status: { type: GraphQLBoolean }
+        status: { type: GraphQLBoolean },
+    }),
+});
+
+const ModelType = new GraphQLObjectType({
+    name: 'Model',
+    fields: () => ({
+        id: { type: GraphQLID },
+        brand: { type: new GraphQLNonNull(GraphQLString)},
+        model: { type: GraphQLString},
     }),
 });
 
@@ -19,8 +29,12 @@ const CarType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         type: { type: new GraphQLNonNull(GraphQLString) },
-        brand: { type: new GraphQLNonNull(GraphQLString)},
-        model: { type: new GraphQLNonNull(GraphQLString)},
+        model: {
+            type: ModelType,
+            resolve({modelId}, args) {
+                return Models.findById(modelId);
+            }
+        },
         color: { type: GraphQLString },
         year: { type: new GraphQLNonNull(GraphQLInt)},
         owner: {
