@@ -14,69 +14,91 @@ import {useMutation, useQuery} from '@apollo/client';
 import {carsQuery} from '../cars-table/queires';
 import {addCarMutation, updateCarMutation} from './mutations';
 import {usersQuery} from '../users-table/queries';
+import {modelsQuery, brandsQuery} from '../cars-form/queries';
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 
-function CarsForm({open, onClose, selectedValue, handleChange, classes}) {
+function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChange, classes}) {
     const [value, setValue] = useState(selectedValue);
+    const [models, setModels] = useState([]);
+
+    const [addCar] = useMutation(addCarMutation, {
+        refetchQueries: [
+            carsQuery,
+        ],
+    });
+    const [updateCar] = useMutation(updateCarMutation, {
+        refetchQueries: [
+            carsQuery,
+        ],
+    });
+
+    const {loading: loadingUsers, data: dataUsers} = useQuery(usersQuery);
+    const {loading: loadingModels, data: dataModels} = useQuery(modelsQuery);
+    const {loading: loadingBrands, data: dataBrands} = useQuery(brandsQuery);
+
+    useEffect(() => {
+        setValue(selectedValue);
+    }, [selectedValue]);
 
     const onChange = (e) => {
         handleChange(e.target.name, e.target.value);
+    };
+
+    const onBrandChange = (e) => {
+        handleChange(e.target.name, e.target.value);
+        const targetModels = client.readQuery({
+            query: modelsQuery,
+            variables: {
+                brandId: e.target.value,
+            }
+        });
+        setModels(targetModels);
     }
-    // {open, classes, handleChange, onClose, selectedValue}
 
-    // const [value, setValue] = useState(selectedValue);
-    //
-    // const [addCar] = useMutation(addCarMutation, {
-    //     refetchQueries: [
-    //         carsQuery,
-    //     ],
-    // })
-    // const [updateCar] = useMutation(updateCarMutation, {
-    //     refetchQueries: [
-    //         carsQuery,
-    //     ],
-    // })
-    //
-    // useEffect(() => {
-    //     setValue(selectedValue);
-    // }, [selectedValue]);
-    //
-    // const [users] = useQuery(usersQuery)
-    //
-    //
-    // const handleClose = () => {
-    //     onClose();
-    // };
-    // const onChange = (e) => {
-    //     // let value = ? e.target.checked : e.target.value;
-    //     // handleChange(e.target.name, value);
-    // };
+    const handleSave = () => {
+        value.id ? updateCar({
+            variables: {
+                modelId: value.model.id,
+                type: value.type,
+                year: value.year,
+                ownerId: value.owner.id,
+                color: value.color,
+            }
+        })
+        : addCar({
+                variables: {
+                    modelId: value.model.id,
+                    type: value.type,
+                    year: value.year,
+                    ownerId: value.owner.id,
+                    color: value.color,
+                }
+            });
+        ;
+        onClose();
+    };
 
-    // const handleSave = () => {
-    //     value.id ? updateCar({
-    //             variables: {
-    //                 modelId: value.modelId,
-    //                 type: value.type,
-    //                 year: value.year,
-    //                 ownerId: value.ownerId,
-    //                 color: value.color,
-    //             }
-    //     })
-    //         : addCar({
-    //         variables: {
-    //             modelId: value.modelId,
-    //             type: value.type,
-    //             year: value.year,
-    //             ownerId: value.ownerId,
-    //             color: value.color,
-    //         }
-    //     });
-    //     onClose();
-    // };
+    const handleClose = () => {
+        onClose();
+    };
 
     return (
         <Dialog onClose={onClose} open={open} aria-labelledby="simple-dialog-title">
             <DialogTitle className={classes.title} id="simple-dialog-title">Car information</DialogTitle>
             <form className={classes.container} noValidate autoComplete="off">
+                <FormControl variant='outlined' className={classes.formControlSelect}>
+                    <InputLabel htmlFor='outlined-age-simple'>
+                        Brand
+                    </InputLabel>
+                    <Select value={value.model.brand.id} onChange={onChange}
+                            input={<OutlinedInput name='ownerId' id='outlined-user' labelWidth={57}/>}
+                    >
+                        {!loadingBrands && dataBrands.brands.map(brand =>
+                            <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+
                 <TextField
                     id='outlined-type'
                     label='Type'
@@ -97,11 +119,25 @@ function CarsForm({open, onClose, selectedValue, handleChange, classes}) {
                     value={value.color}
                     onChange={onChange}
                 />
+                <FormControl variant='outlined' className={classes.formControlSelect}>
+                    <InputLabel htmlFor='outlined-age-simple'>
+                        Owner
+                    </InputLabel>
+                    <Select value={value.owner.id} onChange={onChange}
+                            input={<OutlinedInput name='ownerId' id='outlined-user' labelWidth={57}/>}
+                    >
+                        {!loadingUsers && dataUsers.users.map(user =>
+                            <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+                <div className={classes.wrapper}>
+                    <Button onClick={handleSave} variant='contained' color='primary' className={classes.button}>
+                        <SaveIcon /> Save
+                    </Button>
+                </div>
             </form>
         </Dialog>
-
     );
-
 }
 
 export default withHocs(CarsForm);

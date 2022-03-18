@@ -42,8 +42,8 @@ function UsersTable({onOpen, classes}) {
         setAnchorEl(null);
     };
 
-    const handleEdit = (row) => {
-        onOpen(row);
+    const handleEdit = () => {
+        onOpen(activeElem);
         handleClose();
     };
 
@@ -84,7 +84,7 @@ function UsersTable({onOpen, classes}) {
                                                                 <MoreIcon />
                                                             </IconButton>
                                                             <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                                                                <MenuItem onClick={() => handleEdit(activeElem)}><CreateIcon />Edit</MenuItem>
+                                                                <MenuItem onClick={handleEdit}><CreateIcon />Edit</MenuItem>
                                                                 <MenuItem onClick={handleDelete}><DeleteIcon /> Delete</MenuItem>
                                                             </Menu>
                                                         </>

@@ -9,11 +9,21 @@ import withHocs from './cars-hoc';
 function Cars({classes}) {
     const initValue = {
         id: '',
-        modelId: '',
+        model: {
+            id: '',
+            model: '',
+            brand: {
+                id: '',
+                name: '',
+            },
+        },
         type: '',
         color: '',
         year: 0,
-        ownerId: '',
+        owner: {
+            id: '',
+            name: ''
+        },
     };
 
     const [model, setModel] = useState(initValue);

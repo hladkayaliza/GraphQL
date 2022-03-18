@@ -40,8 +40,8 @@ function CarsTable({classes, onOpen}) {
         setAnchorEl(null);
     };
 
-    const handleEdit = (data) => {
-        onOpen(data);
+    const handleEdit = () => {
+        onOpen(activeElem);
         handleClose();
     };
 
@@ -70,7 +70,7 @@ function CarsTable({classes, onOpen}) {
                         {data.cars.map(car => {
                             return (
                                 <TableRow key={car.id}>
-                                    <TableCell component="th" scope="row">{car.model.brand}</TableCell>
+                                    <TableCell component="th" scope="row">{car.model.brand.name}</TableCell>
                                     <TableCell component="th" scope="row">{car.model.model}</TableCell>
                                     <TableCell component="th" scope="row">{car.type}</TableCell>
                                     <TableCell component="th" scope="row">{car.color}</TableCell>

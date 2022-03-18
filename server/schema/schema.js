@@ -4,6 +4,7 @@ const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList, GraphQLSchema,
 const Users = require('../models/user');
 const Cars = require('../models/car');
 const Models = require('../models/model');
+const Brands = require('../models/brand');
 
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -15,12 +16,25 @@ const UserType = new GraphQLObjectType({
     }),
 });
 
+const BrandType = new GraphQLObjectType({
+    name: 'Brand',
+    fields: () => ({
+        id: {type: GraphQLID},
+        name: {type: new GraphQLNonNull(GraphQLString)},
+    }),
+});
+
 const ModelType = new GraphQLObjectType({
     name: 'Model',
     fields: () => ({
         id: { type: GraphQLID },
-        brand: { type: new GraphQLNonNull(GraphQLString)},
-        model: { type: GraphQLString},
+        model: { type: new GraphQLNonNull(GraphQLString)},
+        brand: {
+            type: BrandType,
+            resolve({brandId}, args ) {
+                return Brands.findById(brandId);
+            }
+        },
     }),
 });
 
@@ -75,6 +89,24 @@ const Query = new GraphQLObjectType({
                 return Cars.find({});
             }
         },
+        brands: {
+            type: new GraphQLList(BrandType),
+            resolve(parent, args) {
+                return Brands.find({});
+            }
+        },
+        modelsByBrand: {
+            type: new GraphQLList(ModelType),
+            resolve(parent, args) {
+                return Models.where({brandId: parent.brandId});
+            },
+        },
+        models: {
+            type: new GraphQLList(ModelType),
+            resolve(parent, args) {
+                return Models.find({});
+            }
+        }
     }
 });
 

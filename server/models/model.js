@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const modelSchema = new Schema({
     model: String,
-    brand: String,
+    brandId: String,
 });
 
 module.exports = mongoose.model('Model', modelSchema);
