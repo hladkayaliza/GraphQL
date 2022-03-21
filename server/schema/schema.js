@@ -97,8 +97,9 @@ const Query = new GraphQLObjectType({
         },
         modelsByBrand: {
             type: new GraphQLList(ModelType),
-            resolve(parent, args) {
-                return Models.where({brandId: parent.brandId});
+            args: { brandId: { type: GraphQLID } },
+            resolve(parent, {brandId}) {
+                return Models.find({brandId: {$regex: brandId}, $options: "i"});
             },
         },
         models: {

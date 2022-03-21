@@ -6,8 +6,18 @@ export const modelsQuery = gql`
             id
             model 
             brand {
+                id
                 name
             }
+        }
+    }
+`;
+
+export const modelsByBrandQuery = gql`
+    query modelsByBrand($brandId: ID) {
+      modelsByBrand(brandId: $brandId) {
+            id
+            model
         }
     }
 `;
@@ -20,3 +30,4 @@ export const brandsQuery = gql`
         }
     }
 `;
+

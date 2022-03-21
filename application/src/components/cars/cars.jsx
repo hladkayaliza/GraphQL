@@ -28,9 +28,16 @@ function Cars({classes}) {
 
     const [model, setModel] = useState(initValue);
     const [open, setOpen] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
 
-    const handleClickOpen = (data = initValue) => {
+    const handleClickOpenOnEdit = (data ) => {
+        setIsEdit(true);
         setModel({...model, ...data});
+        setOpen(true);
+    };
+    const handleClickOpenOnAdd = (initValue) => {
+        setIsEdit(false);
+        setModel({...model, ...initValue});
         setOpen(true);
     };
 
@@ -51,10 +58,11 @@ function Cars({classes}) {
                           selectedValue={model}
                           open={open}
                           onClose={handleClose}
+                          isEdit={isEdit}
                 />
                 <div className={classes.wrapper}>
-                    <CarsTable onOpen={handleClickOpen} onClose={handleClose} />
-                    <Fab onClick={handleClickOpen}
+                    <CarsTable onOpen={handleClickOpenOnEdit} onClose={handleClose} />
+                    <Fab onClick={handleClickOpenOnAdd}
                          color="primary"
                          aria-label="Add"
                          className={classes.fab}

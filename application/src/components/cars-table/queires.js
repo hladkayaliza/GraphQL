@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export const carsQuery = gql`
     query cars{
         cars{
+            id
             type
             year
             color

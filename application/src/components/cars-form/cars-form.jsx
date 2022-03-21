@@ -10,17 +10,18 @@ import Dialog from '@material-ui/core/Dialog';
 import SaveIcon from '@material-ui/icons/Save';
 import FormControl from '@material-ui/core/FormControl';
 import withHocs from './cars-form-hoc';
-import {useMutation, useQuery} from '@apollo/client';
+import {useMutation, useQuery, useLazyQuery, useApolloClient} from '@apollo/client';
 import {carsQuery} from '../cars-table/queires';
 import {addCarMutation, updateCarMutation} from './mutations';
 import {usersQuery} from '../users-table/queries';
-import {modelsQuery, brandsQuery} from '../cars-form/queries';
+import {modelsQuery, modelsByBrandQuery, brandsQuery} from '../cars-form/queries';
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
-function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChange, classes}) {
+
+function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChange, classes, isEdit}) {
     const [value, setValue] = useState(selectedValue);
-    const [models, setModels] = useState([]);
+    const [brand, setBrand] = useState(isEdit ? selectedValue.model.brand.id : '');
 
     const [addCar] = useMutation(addCarMutation, {
         refetchQueries: [
@@ -32,10 +33,25 @@ function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChang
             carsQuery,
         ],
     });
-
     const {loading: loadingUsers, data: dataUsers} = useQuery(usersQuery);
-    const {loading: loadingModels, data: dataModels} = useQuery(modelsQuery);
     const {loading: loadingBrands, data: dataBrands} = useQuery(brandsQuery);
+
+    const {loading: loadingModels, data: dataModels} = isEdit ? targetModels(selectedValue.model.brand.id)
+    : useQuery(modelsQuery);
+
+    const [models, setModels] = useState(dataModels);
+
+
+
+
+    const targetModels = (brandId) => {
+        return useQuery(modelsByBrandQuery, {
+            variables: {
+                brandId: brandId,
+            }
+        })
+    };
+
 
     useEffect(() => {
         setValue(selectedValue);
@@ -46,14 +62,13 @@ function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChang
     };
 
     const onBrandChange = (e) => {
-        handleChange(e.target.name, e.target.value);
-        const targetModels = client.readQuery({
-            query: modelsQuery,
-            variables: {
-                brandId: e.target.value,
-            }
-        });
-        setModels(targetModels);
+        const models = targetModels(e.target.value);
+        setModels(models);
+        // const models = getModels({
+        //     variables: { brandId: e.target.value }
+        // }).then(result => {
+        //     setModels(result.data.modelsByBrand);
+        // });
     }
 
     const handleSave = () => {
@@ -91,13 +106,29 @@ function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChang
                     <InputLabel htmlFor='outlined-age-simple'>
                         Brand
                     </InputLabel>
-                    <Select value={value.model.brand.id} onChange={onChange}
-                            input={<OutlinedInput name='ownerId' id='outlined-user' labelWidth={57}/>}
+                    <Select value={value.model.brand.id} onChange={onBrandChange}
+                                input={<OutlinedInput name='brandId' id='outlined-user' labelWidth={57}/>}
                     >
                         {!loadingBrands && dataBrands.brands.map(brand =>
                             <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>)}
                     </Select>
                 </FormControl>
+                {console.log(dataModels)}
+                <FormControl variant='outlined' className={classes.formControlSelect}>
+                    <InputLabel htmlFor='outlined-age-simple'>
+                        Model
+                    </InputLabel>
+                    <Select disabled={!isEdit}
+                            value={value.model.id}
+                            onChange={onChange}
+                            input={<OutlinedInput name='modelId' id='outlined-user' labelWidth={57}/>}
+                    >
+                        {!loadingModels && dataModels.modelsByBrand && dataModels.modelsByBrand.map(model =>
+                            <MenuItem key={model.id} value={model.id}>{model.model}</MenuItem>)}
+                    </Select>
+                </FormControl>
+
+                {/*{isEdit ? <h1>Liza</h1> : <h1>Inna</h1>}*/}
 
                 <TextField
                     id='outlined-type'
