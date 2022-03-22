@@ -161,17 +161,15 @@ const Mutation = new GraphQLObjectType({
             type: CarType,
             args: {
                 type: { type: new GraphQLNonNull(GraphQLString) },
-                brand: { type: new GraphQLNonNull(GraphQLString) },
-                model: { type: new GraphQLNonNull(GraphQLString) },
+                modelId: { type: new GraphQLNonNull(GraphQLID) },
                 color: { type: GraphQLString },
                 year: { type: GraphQLInt },
                 ownerId: { type: GraphQLID },
             },
-            resolve(parent, { type, brand, model, year, ownerId }) {
+            resolve(parent, { type, modelId, year, ownerId }) {
                 const car = new Cars({
                     type: type,
-                    brand: brand,
-                    model: model,
+                    modelId: modelId,
                     year: year,
                     ownerId: ownerId,
                 });
@@ -193,16 +191,15 @@ const Mutation = new GraphQLObjectType({
             args: {
                 id: { type: GraphQLID },
                 type: { type: new GraphQLNonNull(GraphQLString) },
-                brand: { type: new  GraphQLNonNull(GraphQLString)},
-                model: { type: new  GraphQLNonNull(GraphQLString)},
+                modelId: { type: new  GraphQLNonNull(GraphQLID)},
                 color: { type: GraphQLString },
                 year: { type: GraphQLInt },
                 ownerId: { type: GraphQLID },
             },
-            resolve(parent, { id, type, brand, model, color, year, ownerId }) {
+            resolve(parent, { id, type, brand, modelId, color, year, ownerId }) {
                 return Cars.findByIdAndUpdate(
                     id,
-                    { $set: { type: type, brand: brand, model: model, color: color, year: year, ownerId:ownerId } },
+                    { $set: { type: type, brand: brand, modelId: modelId, color: color, year: year, ownerId:ownerId } },
                 )
             }
         },

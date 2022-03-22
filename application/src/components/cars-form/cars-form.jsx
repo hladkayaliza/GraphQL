@@ -1,27 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import TextField from '@material-ui/core/TextField';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import withHocs from './cars-form-hoc';
 import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import SaveIcon from '@material-ui/icons/Save';
 import FormControl from '@material-ui/core/FormControl';
-import withHocs from './cars-form-hoc';
-import {useMutation, useQuery, useLazyQuery, useApolloClient} from '@apollo/client';
-import {carsQuery} from '../cars-table/queires';
-import {addCarMutation, updateCarMutation} from './mutations';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import {useMutation, useQuery} from '@apollo/client';
 import {usersQuery} from '../users-table/queries';
-import {modelsQuery, modelsByBrandQuery, brandsQuery} from '../cars-form/queries';
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import {brandsQuery} from './queries';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import Button from "@material-ui/core/Button";
+import {addCarMutation, updateCarMutation} from "./mutations";
+import {carsQuery} from "../cars-table/queires";
 
 
-function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChange, classes, isEdit}) {
+function CarsForm({open, onClose, classes, handleChange, selectedValue, carModels}) {
+
     const [value, setValue] = useState(selectedValue);
-    const [brand, setBrand] = useState(isEdit ? selectedValue.model.brand.id : '');
+    const [models, setModels] = useState(carModels);
 
     const [addCar] = useMutation(addCarMutation, {
         refetchQueries: [
@@ -33,68 +32,43 @@ function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChang
             carsQuery,
         ],
     });
-    const {loading: loadingUsers, data: dataUsers} = useQuery(usersQuery);
-    const {loading: loadingBrands, data: dataBrands} = useQuery(brandsQuery);
-
-    const {loading: loadingModels, data: dataModels} = isEdit ? targetModels(selectedValue.model.brand.id)
-    : useQuery(modelsQuery);
-
-    const [models, setModels] = useState(dataModels);
-
-
-
-
-    const targetModels = (brandId) => {
-        return useQuery(modelsByBrandQuery, {
-            variables: {
-                brandId: brandId,
-            }
-        })
-    };
-
 
     useEffect(() => {
         setValue(selectedValue);
-    }, [selectedValue]);
+        setModels(carModels);
+    }, [selectedValue, carModels]);
+
+    const {loading: loadingUsers, data: dataUsers} = useQuery(usersQuery, {
+        fetchPolicy: "cache-first"
+    });
+    const {loading: loadingBrands, data: dataBrands} = useQuery(brandsQuery, {
+        fetchPolicy: "cache-first"
+    });
 
     const onChange = (e) => {
         handleChange(e.target.name, e.target.value);
-    };
-
-    const onBrandChange = (e) => {
-        const models = targetModels(e.target.value);
-        setModels(models);
-        // const models = getModels({
-        //     variables: { brandId: e.target.value }
-        // }).then(result => {
-        //     setModels(result.data.modelsByBrand);
-        // });
     }
 
     const handleSave = () => {
         value.id ? updateCar({
-            variables: {
-                modelId: value.model.id,
-                type: value.type,
-                year: value.year,
-                ownerId: value.owner.id,
-                color: value.color,
-            }
-        })
-        : addCar({
                 variables: {
-                    modelId: value.model.id,
+                    id: value.id,
+                    modelId: value.modelId,
                     type: value.type,
                     year: value.year,
-                    ownerId: value.owner.id,
+                    ownerId: value.ownerId,
+                    color: value.color,
+                }
+            })
+            : addCar({
+                variables: {
+                    modelId: value.modelId,
+                    type: value.type,
+                    year: value.year,
+                    ownerId: value.ownerId,
                     color: value.color,
                 }
             });
-        ;
-        onClose();
-    };
-
-    const handleClose = () => {
         onClose();
     };
 
@@ -106,30 +80,24 @@ function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChang
                     <InputLabel htmlFor='outlined-age-simple'>
                         Brand
                     </InputLabel>
-                    <Select value={value.model.brand.id} onChange={onBrandChange}
-                                input={<OutlinedInput name='brandId' id='outlined-user' labelWidth={57}/>}
+                    <Select value={value.brandId} onChange={onChange}
+                            input={<OutlinedInput name='brandId' id='outlined-user' labelWidth={57}/>}
                     >
                         {!loadingBrands && dataBrands.brands.map(brand =>
                             <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>)}
                     </Select>
                 </FormControl>
-                {console.log(dataModels)}
                 <FormControl variant='outlined' className={classes.formControlSelect}>
                     <InputLabel htmlFor='outlined-age-simple'>
                         Model
                     </InputLabel>
-                    <Select disabled={!isEdit}
-                            value={value.model.id}
-                            onChange={onChange}
+                    <Select value={value.modelId} onChange={onChange}
                             input={<OutlinedInput name='modelId' id='outlined-user' labelWidth={57}/>}
                     >
-                        {!loadingModels && dataModels.modelsByBrand && dataModels.modelsByBrand.map(model =>
+                        {models && models.map(model =>
                             <MenuItem key={model.id} value={model.id}>{model.model}</MenuItem>)}
                     </Select>
                 </FormControl>
-
-                {/*{isEdit ? <h1>Liza</h1> : <h1>Inna</h1>}*/}
-
                 <TextField
                     id='outlined-type'
                     label='Type'
@@ -154,7 +122,7 @@ function CarsForm({open, onClose, selectedValue, handleChange, handleSelectChang
                     <InputLabel htmlFor='outlined-age-simple'>
                         Owner
                     </InputLabel>
-                    <Select value={value.owner.id} onChange={onChange}
+                    <Select value={value.ownerId} onChange={onChange}
                             input={<OutlinedInput name='ownerId' id='outlined-user' labelWidth={57}/>}
                     >
                         {!loadingUsers && dataUsers.users.map(user =>

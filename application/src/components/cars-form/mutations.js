@@ -1,14 +1,21 @@
 import { gql } from '@apollo/client';
 
 export const addCarMutation = gql`
-    mutation addCar($model: String!, $brand: String!, $color: String, $type: String!, $year: Int, $owner: ID) {
-        addCar(model: $model, brand: $brand, color: $color, type: $type, year: $year, ownerId: $owner) {
-            model
-            brand
+    mutation addCar($modelId: ID!, $color: String, $type: String!, $year: Int, $ownerId: ID) {
+        addCar(modelId: $modelId, color: $color, type: $type, year: $year, ownerId: $ownerId) {
+            model {
+              id
+              model
+              brand {
+                id
+                name
+              }
+            }
             color
             type
             year
             owner {
+              id
               name
             }
         }
@@ -16,16 +23,23 @@ export const addCarMutation = gql`
 `;
 
 export const updateCarMutation = gql`
-    mutation updateCar($id:ID, $model: String!, $brand: String!, $color: String, $type: String!, $year: Int, $owner: ID) {
-        updateCar(id: $id, model: $model, brand: $brand, color: $color, type: $type, year: $year, ownerId: $owner) {
-            model
-            brand
-            color
+    mutation updateCar($id:ID, $modelId: ID!, $type: String!, $color: String, $year: Int, $ownerId: ID ) {
+        updateCar(id: $id, modelId: $modelId, type: $type, color: $color, year:$year, ownerId: $ownerId) {
+            id
             type
-            year
+            model {
+                id
+                brand {
+                    id
+                    name
+                }
+            }
             owner {
+              id
               name
             }
-        }
+            color
+            year    
+      }
     }
 `;

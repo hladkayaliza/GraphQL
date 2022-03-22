@@ -5,34 +5,48 @@ import CarsForm from "../cars-form/cars-form";
 import CarsTable from "../cars-table/cars-table";
 
 import withHocs from './cars-hoc';
+import {useLazyQuery} from "@apollo/client";
+import {modelsByBrandQuery} from "../cars-form/queries";
 
 function Cars({classes}) {
     const initValue = {
         id: '',
-        model: {
-            id: '',
-            model: '',
-            brand: {
-                id: '',
-                name: '',
-            },
-        },
+        modelId: '',
+        brandId: '',
         type: '',
         color: '',
         year: 0,
-        owner: {
-            id: '',
-            name: ''
-        },
+        ownerId: '',
     };
 
     const [model, setModel] = useState(initValue);
+    const [carModels, setCarModels] = useState([]);
+    const [getModels] = useLazyQuery(modelsByBrandQuery);
+
     const [open, setOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
-    const handleClickOpenOnEdit = (data ) => {
+
+    const handleClickOpenOnEdit = (data) => {
         setIsEdit(true);
-        setModel({...model, ...data});
+        const model = {
+            id: data.id,
+            modelId: data.model.id,
+            brandId: data.model.brand.id,
+            type: data.type,
+            color: data.color,
+            year: data.year,
+            ownerId: data.owner.id
+        };
+        setModel(model);
+        getModels({
+            variables: {
+                brandId: model.brandId
+            }
+        }).then(res => {
+            setCarModels(res.data.modelsByBrand);
+        });
+
         setOpen(true);
     };
     const handleClickOpenOnAdd = (initValue) => {
@@ -49,6 +63,15 @@ function Cars({classes}) {
     const handleChange = (name, value) => {
         let currentModel = model;
         currentModel[name] = value;
+        if (name === "brandId") {
+            getModels({
+                variables: {
+                    brandId: currentModel.brandId
+                }
+            }).then(res => {
+                setCarModels(res.data.modelsByBrand);
+            });
+        }
         setModel({...model, currentModel});
     };
 
@@ -56,6 +79,7 @@ function Cars({classes}) {
             <>
                 <CarsForm handleChange={handleChange}
                           selectedValue={model}
+                          carModels={carModels}
                           open={open}
                           onClose={handleClose}
                           isEdit={isEdit}
