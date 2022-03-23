@@ -23,7 +23,7 @@ function UsersTable({onOpen, classes}) {
     const [activeElem, setActiveElem] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
 
-    const {loading, error, data} = useQuery(usersQuery);
+    const {loading, data} = useQuery(usersQuery);
 
     const handleDialogOpen = () => {
         setOpenDialog(true);
@@ -47,55 +47,55 @@ function UsersTable({onOpen, classes}) {
         handleClose();
     };
 
-    const handleDelete = (row) => {
+    const handleDelete = () => {
         handleDialogOpen();
         handleClose();
     };
 
     return loading ?  <h3>Loading...</h3>
                     : <>
-                            <UserDialog open={openDialog} handleClose={handleDialogClose} id={activeElem ? activeElem.id : null} />
-                            <Paper className={classes.root}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Email</TableCell>
-                                            <TableCell>Status</TableCell>
-                                            <TableCell>Cars</TableCell>
-                                            <TableCell></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.users.map(user => {
-                                            return (
-                                                <TableRow key={user.id}>
-                                                    <TableCell component="th" scope="row">{user.name}</TableCell>
-                                                    <TableCell>{user.email}</TableCell>
-                                                    <TableCell>
-                                                        <Checkbox key={user.status}
-                                                                  checked={user.status}
-                                                                  disabled={true}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell align="right">
-                                                        <>
-                                                            <IconButton color="inherit" onClick={(e) => handleClick(e, user)}>
-                                                                <MoreIcon />
-                                                            </IconButton>
-                                                            <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                                                                <MenuItem onClick={handleEdit}><CreateIcon />Edit</MenuItem>
-                                                                <MenuItem onClick={handleDelete}><DeleteIcon /> Delete</MenuItem>
-                                                            </Menu>
-                                                        </>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </Paper>
-                        </>
+                        <UserDialog open={openDialog} handleClose={handleDialogClose} id={activeElem ? activeElem.id : null} />
+                        <Paper className={classes.root}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Status</TableCell>
+                                        <TableCell>Cars</TableCell>
+                                        <TableCell></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.users.map(user => {
+                                        return (
+                                            <TableRow key={user.id}>
+                                                <TableCell component="th" scope="row">{user.name}</TableCell>
+                                                <TableCell>{user.email}</TableCell>
+                                                <TableCell>
+                                                    <Checkbox key={user.status}
+                                                              checked={user.status}
+                                                              disabled={true}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    <>
+                                                        <IconButton color="inherit" onClick={(e) => handleClick(e, user)}>
+                                                            <MoreIcon />
+                                                        </IconButton>
+                                                        <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                                                            <MenuItem onClick={handleEdit}><CreateIcon />Edit</MenuItem>
+                                                            <MenuItem onClick={handleDelete}><DeleteIcon /> Delete</MenuItem>
+                                                        </Menu>
+                                                    </>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                    </>
 }
 
 export default withHocs(UsersTable);

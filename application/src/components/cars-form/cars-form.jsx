@@ -8,13 +8,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import {useMutation, useQuery} from '@apollo/client';
-import {usersQuery} from '../users-table/queries';
-import {brandsQuery} from './queries';
+import { usersQuery } from '../users-table/queries';
+import { brandsQuery } from './queries';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import Button from "@material-ui/core/Button";
-import {addCarMutation, updateCarMutation} from "./mutations";
-import {carsQuery} from "../cars-table/queires";
+import Button from '@material-ui/core/Button';
+import { addCarMutation, updateCarMutation } from './mutations';
+import { carsQuery } from '../cars-table/queires';
 
 
 function CarsForm({open, onClose, classes, handleChange, selectedValue, carModels}) {

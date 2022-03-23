@@ -11,7 +11,6 @@ import { useMutation } from '@apollo/client';
 import { deleteUserMutation } from './mutations';
 import { usersQuery } from '../users-table/queries';
 
-
 function UserDialog({open, handleClose, id}) {
 
     const [deleteUser] = useMutation(deleteUserMutation, {

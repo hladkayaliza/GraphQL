@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import CarsForm from "../cars-form/cars-form";
-import CarsTable from "../cars-table/cars-table";
-
+import CarsForm from '../cars-form/cars-form';
+import CarsTable from '../cars-table/cars-table';
 import withHocs from './cars-hoc';
-import {useLazyQuery} from "@apollo/client";
-import {modelsByBrandQuery} from "../cars-form/queries";
+import { useLazyQuery } from '@apollo/client';
+import { modelsByBrandQuery } from '../cars-form/queries';
+import { BRANDID } from '../../constants/user';
 
 function Cars({classes}) {
     const initValue = {
@@ -21,14 +21,21 @@ function Cars({classes}) {
 
     const [model, setModel] = useState(initValue);
     const [carModels, setCarModels] = useState([]);
+    const [open, setOpen] = useState(false);
+
     const [getModels] = useLazyQuery(modelsByBrandQuery);
 
-    const [open, setOpen] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-
+    const updateModels = (brandId) => {
+        getModels({
+            variables: {
+                brandId: brandId
+            }
+        }).then(res => {
+            setCarModels(res.data.modelsByBrand);
+        });
+    };
 
     const handleClickOpenOnEdit = (data) => {
-        setIsEdit(true);
         const model = {
             id: data.id,
             modelId: data.model.id,
@@ -39,18 +46,11 @@ function Cars({classes}) {
             ownerId: data.owner.id
         };
         setModel(model);
-        getModels({
-            variables: {
-                brandId: model.brandId
-            }
-        }).then(res => {
-            setCarModels(res.data.modelsByBrand);
-        });
-
+        updateModels(model.brandId)
         setOpen(true);
     };
+
     const handleClickOpenOnAdd = (initValue) => {
-        setIsEdit(false);
         setModel({...model, ...initValue});
         setOpen(true);
     };
@@ -63,14 +63,8 @@ function Cars({classes}) {
     const handleChange = (name, value) => {
         let currentModel = model;
         currentModel[name] = value;
-        if (name === "brandId") {
-            getModels({
-                variables: {
-                    brandId: currentModel.brandId
-                }
-            }).then(res => {
-                setCarModels(res.data.modelsByBrand);
-            });
+        if (name === BRANDID) {
+            updateModels(currentModel.brandId);
         }
         setModel({...model, currentModel});
     };
@@ -82,7 +76,6 @@ function Cars({classes}) {
                           carModels={carModels}
                           open={open}
                           onClose={handleClose}
-                          isEdit={isEdit}
                 />
                 <div className={classes.wrapper}>
                     <CarsTable onOpen={handleClickOpenOnEdit} onClose={handleClose} />
@@ -96,7 +89,6 @@ function Cars({classes}) {
                 </div>
             </>
     );
-
 }
 
 export default withHocs(Cars);

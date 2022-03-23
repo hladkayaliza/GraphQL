@@ -16,6 +16,7 @@ import { usersQuery } from '../users-table/queries';
 function UsersForm({open, classes, handleChange, onClose, selectedValue}) {
 
     const [value, setValue] = useState(selectedValue);
+
     const [addUser] = useMutation(addUserMutation, {
         refetchQueries: [
             usersQuery,
